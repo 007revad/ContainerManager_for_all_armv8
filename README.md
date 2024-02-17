@@ -11,7 +11,7 @@ A Container Manager package for RS819, DS119j, DS418, DS418j, DS218, DS218play a
 
 There is no technical reason why these NAS models with Realtek RTD1296 or Marvell A3720 CPUs are excluded from installing Container Manager when they have the same CPU as the DS220j or DS120j which are both supported by the Container Manager package. 
 
-So I made a tiny edit so the package will install on any model with a Realtek RTD1296 or Marvell A3720 CPU running DSM 7.2 or later.
+So I made a tiny edit to the package so it will install on any model with a Realtek RTD1296 or Marvell A3720 CPU running DSM 7.2 or later.
 
 ## Download the package
 
