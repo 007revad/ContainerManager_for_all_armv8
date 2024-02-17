@@ -24,3 +24,6 @@ So I made a tiny edit so the package will install on any model with a Realtek RT
 2. Click on Manual Install.
 3. Click Browse and browse to where you downloaded the spk to and select the spk file.
 4. Click next and install the package.
+
+<p align="center">Manual Package Install steps</p>
+<p align="center"><img src="/images/package_manual_install.png"></p>
