@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.1.3"
+scriptver="v1.2.4"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -84,6 +84,15 @@ if [[ ! $majorversion -ge "7" ]] && [[ ! $minorversion -ge "2" ]]; then
     exit 1  # Mot DSM 7.2 or later
 fi
 
+restore_unique(){ 
+    # Restore unique to original model
+    if [[ -n $current_unique ]]; then
+        echo "Restoring synoinfo.conf"
+        synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
+        synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
+    fi
+}
+
 progbar(){ 
     # $1 is pid of process
     # $2 is string to echo
@@ -118,6 +127,7 @@ progstatus(){
         echo -e "Line ${LINENO}: ${Error}ERROR${Off} $2 failed!"
         echo "$tracestring"
         if [[ $exitonerror != "no" ]]; then
+            restore_unique
             exit 1  # Skip exit if exitonerror != no
         fi
     fi
