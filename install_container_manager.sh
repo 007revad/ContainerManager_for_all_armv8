@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.0.2"
+scriptver="v1.1.3"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -135,18 +135,19 @@ package_status(){
     # DSM 7.2       0 = started, 17 = stopped, 255 = not_installed, 150 = broken
     # DSM 6 to 7.1  0 = started,  3 = stopped,   4 = not_installed, 150 = broken
     if [[ $code == "0" ]]; then
-        #echo "$1 is started"  # debug
+        echo -e "$1 is started\n" >&2  # debug
         return 0
     elif [[ $code == "17" ]] || [[ $code == "3" ]]; then
-        #echo "$1 is stopped"  # debug
+        echo -e "$1 is stopped\n" >&2  # debug
         return 1
     elif [[ $code == "255" ]] || [[ $code == "4" ]]; then
-        echo "$1 is not installed"  # debug
+        echo -e "$1 is not installed\n" >&2  # debug
         return 255
     elif [[ $code == "150" ]]; then
-        echo "$1 is broken"  # debug
+        echo -e "$1 is broken\n" >&2  # debug
         return 150
     else
+        #echo "$code" >&2  # debug
         return "$code"
     fi
 }
@@ -252,7 +253,10 @@ else
 fi
 
 # Check if Container Manager already installed
-if [[ $(package_status ContainerManager) != "255" ]]; then
+package_status ContainerManager >/dev/null
+code="$?"
+#if [[ $(package_status ContainerManager) != "255" ]]; then
+if [[ $code != "255" ]]; then
     target=$(readlink "/var/packages/ContainerManager/target")
     targetvol="/$(printf %s "${target:?}" | cut -d'/' -f2 )"
     #targetvol="$(printf %s "${target:?}" | cut -d'/' -f2 )"
