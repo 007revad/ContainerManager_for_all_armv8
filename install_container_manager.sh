@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2076
 #---------------------------------------------------------------------------------------
 # Install Container Manager on RS819, DS119j, DS418, DS418j, DS218, DS218play and DS118
 #
@@ -9,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.0.1"
+scriptver="v1.0.2"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -65,8 +66,8 @@ productversion=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION productvers
 buildphase=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION buildphase)
 buildnumber=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION buildnumber)
 smallfixnumber=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION smallfixnumber)
-#majorversion=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION majorversion)
-#minorversion=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION minorversion)
+majorversion=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION majorversion)
+minorversion=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION minorversion)
 
 # Show DSM full version and model
 if [[ $buildphase == GM ]]; then buildphase=""; fi
@@ -77,6 +78,11 @@ echo -e "$model DSM $productversion-$buildnumber$smallfix $buildphase"
 current_unique="$(synogetkeyvalue /etc.defaults/synoinfo.conf unique)"
 echo -e "$current_unique\n"
 
+# Check DSM version
+if [[ ! $majorversion -ge "7" ]] && [[ ! $minorversion -ge "2" ]]; then
+    echo -e "This script requires DSM 7.2 or later.\n"
+    exit 1  # Mot DSM 7.2 or later
+fi
 
 progbar(){ 
     # $1 is pid of process
