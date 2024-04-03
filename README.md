@@ -32,6 +32,15 @@ So I made a script to install the package from the DS424 on any model with a Rea
     - Do ***NOT*** save the script to a M.2 volume.
 3. Unzip the zip file.
 
+### To run the script via SSH
+
+[How to enable SSH and login to DSM via SSH](https://kb.synology.com/en-global/DSM/tutorial/How_to_login_to_DSM_with_root_permission_via_SSH_Telnet)
+
+```YAML
+sudo -s /volume1/scripts/install_container_manager.sh
+```
+
+**Note:** Replace /volume1/scripts/ with the path to where the script is located.
 ### What to do after running the script
 
 1. Open Package Center.
