@@ -20,7 +20,7 @@ So I made a script to install the package from the DS424 on any model with a Rea
 | RS819      | Realtek RTD1296 |  | ? |  |
 | DS119j     | Marvell A3720 |  | ? |  |
 | DS418      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | no | 1 person |
-| DS418j     | Realtek RTD129**3**? |  | ? |  |
+| DS418j     | Realtek RTD129**3** ? |  | ? |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes | 1 person |
 | DS218play  | Realtek RTD1296 |  | ? |  |
 | DS118      | Realtek RTD1296 |  | ? |  |
