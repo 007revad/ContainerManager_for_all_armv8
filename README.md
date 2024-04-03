@@ -32,12 +32,15 @@ So I made a script to install the package from the DS424 on any model with a Rea
     - Do ***NOT*** save the script to a M.2 volume.
 3. Unzip the zip file.
 
-## How to do a manual package install
+### What to do after running the script
 
 1. Open Package Center.
-2. Click on Manual Install.
-3. Click Browse and browse to where you downloaded the spk to and select the spk file.
-4. Click next and install the package.
+2. Click on Settings.
+3. Click on Auto Update.
+4. Select "Only packages below".
+5. Make sure "All Packages" is **NOT** ticked.
+6. Make sure "Important Versions" is **NOT** ticked.
+7. Click OK.
 
 <p align="center">Manual Package Install steps</p>
 <p align="center"><img src="/images/package_manual_install.png"></p>
