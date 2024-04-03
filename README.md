@@ -42,5 +42,5 @@ So I made a script to install the package from the DS424 on any model with a Rea
 6. Make sure "Important Versions" is **NOT** ticked.
 7. Click OK.
 
-<p align="center">Manual Package Install steps</p>
+<p align="center">Prevent Container Manager from auto updating</p>
 <p align="center"><img src="/images/package_manual_install.png"></p>
