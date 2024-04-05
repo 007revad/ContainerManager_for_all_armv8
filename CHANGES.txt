@@ -1,12 +1,15 @@
 v1.2.5
-- Changed to checks if CPU is armv8 as well as in Synology's excluded list.
+- Changed to check if CPU is armv8 as well as in Synology's excluded model list.
 - Better error message if CPU is armv7.
 - Better error message if CPU is x86_64.
 
 v1.2.4
-- Changed to restore synoinfo.conf setting if installing Container Manager failed.
+- Changed to restore unique model string before exiting if installing Container Manager failed.
 
-v1.0.3
+v1.1.3
+- Bug fix for script incorrectly saying Container Manager is already installed.
+
+v1.0.2
 - First release of script to install Container Manager on armv8 NAS.
 
 20.10.23-1437
