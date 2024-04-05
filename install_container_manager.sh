@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.3.5"
+scriptver="v1.2.5"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -74,15 +74,40 @@ if [[ $buildphase == GM ]]; then buildphase=""; fi
 if [[ $smallfixnumber -gt "0" ]]; then smallfix="-$smallfixnumber"; fi
 echo -e "$model DSM $productversion-$buildnumber$smallfix $buildphase"
 
-# Get value of unique
-current_unique="$(synogetkeyvalue /etc.defaults/synoinfo.conf unique)"
-echo -e "$current_unique\n"
-
 # Check DSM version
 if [[ ! $majorversion -ge "7" ]] && [[ ! $minorversion -ge "2" ]]; then
     echo -e "This script requires DSM 7.2 or later.\n"
     exit 1  # Mot DSM 7.2 or later
 fi
+
+# Get CPU arch
+arch="$(uname -m)"; echo "CPU is $arch"
+
+# Get value of unique
+current_unique="$(synogetkeyvalue /etc.defaults/synoinfo.conf unique)"
+echo -e "$current_unique\n"
+
+# Check if arch is armv8
+if [[ $arch == "armv71" ]]; then
+    echo -e "Container Manager is not available for 32-bit CPUs.\n"
+    exit
+elif [[ $arch == "x86_64" ]]; then
+    echo -e "This script is only for armv8 CPUs.\n"
+    exit
+fi
+
+# List of models that need this script
+exclude_list=("synology_rtd1296_ds118" "synology_rtd1296_ds218")
+exclude_list+=("synology_rtd1296_ds218play" "synology_rtd1296_ds418")
+exclude_list+=("synology_rtd1296_ds418j" "synology_armada37xx_ds119j")
+exclude_list+=("synology_rtd1296_rs819")
+
+# Check if this model needs this script
+if [[ ! ${exclude_list[*]} =~ "$current_unique" ]]; then
+    echo -e "You don't need this script for your $current_unique\n"
+    exit
+fi
+
 
 restore_unique(){ 
     # Restore unique to original model
@@ -178,6 +203,7 @@ wait_status(){
         package_status "$1"
         code="$?"
         if [[ $code == "255" ]] || [[ $code == "150" ]]; then
+            restore_unique
             exit "$code"
         fi
         while [[ $code != "$state" ]]; do
@@ -247,20 +273,6 @@ package_install(){
     progstatus "$?" "$string" "line ${LINENO}"
 }
 
-# List of models that need this script
-exclude_list=("synology_rtd1296_ds118" "synology_rtd1296_ds218")
-exclude_list+=("synology_rtd1296_ds218play" "synology_rtd1296_ds418")
-exclude_list+=("synology_rtd1296_ds418j" "synology_armada37xx_ds119j")
-exclude_list+=("synology_rtd1296_rs819")
-
-# Check if this model needs this script
-if [[ ${exclude_list[*]} =~ "$current_unique" ]]; then
-    correct_model="yes"
-else
-    echo "You don't need this script. Container Manager is available"
-    echo -e "in Package Center for your $current_unique\n"
-#    exit
-fi
 
 # Check if Container Manager already installed
 package_status ContainerManager >/dev/null
@@ -315,11 +327,9 @@ fi
 
 
 # Change unique to a supported model
-if [[ $correct_model == "yes" ]]; then
-    echo "Editing synoinfo.conf"
-    synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
-    synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
-fi
+echo "Editing synoinfo.conf"
+synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
+synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
 
 
 # ? Download https://global.synologydownload.com/download/Package/spk/ContainerManager/20.10.23-1437/ContainerManager-armv8-20.10.23-1437.spk
@@ -339,16 +349,15 @@ package_stop ContainerManager "Container Manager"
 wait_status ContainerManager stop
 
 
-if [[ $correct_model == "yes" ]]; then
-    # Edit /var/packages/ContainerManager/INFO to delete the "exclude_model=..." line
-    echo "Editing ContainerManager INFO"
-    sed -i "/exclude_model=*/d" /var/packages/ContainerManager/INFO
+# Edit /var/packages/ContainerManager/INFO to delete the "exclude_model=..." line
+echo "Editing ContainerManager INFO"
+sed -i "/exclude_model=*/d" /var/packages/ContainerManager/INFO
 
-    # Restore unique to original model
-    echo "Restoring synoinfo.conf"
-    synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
-    synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
-fi
+# Restore unique to original model
+echo "Restoring synoinfo.conf"
+synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
+synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
+
 
 # Start Container Manager
 package_start ContainerManager "Container Manager"
