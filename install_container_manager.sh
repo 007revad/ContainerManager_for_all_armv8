@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.2.4"
+scriptver="v1.3.5"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -259,7 +259,7 @@ if [[ ${exclude_list[*]} =~ "$current_unique" ]]; then
 else
     echo "You don't need this script. Container Manager is available"
     echo -e "in Package Center for your $current_unique\n"
-    exit
+#    exit
 fi
 
 # Check if Container Manager already installed

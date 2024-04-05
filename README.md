@@ -25,6 +25,20 @@ So I made a script to install the package from the DS424 on any model with a Rea
 | DS218play  | Realtek RTD1296 |  | ? |  |
 | DS118      | Realtek RTD1296 |  | ? |  |
 
+### Will NOT work on models with a 32 bit CPU
+
+| Model      | CPU | Package Arch |  | uname -m | Working |
+| ---------- |-----|--------------|--|----------|---------|
+| DS419slim  | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| DS218j     | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| RS217      | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| RS816      | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| DS416slim  | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| DS416j     | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| DS216j     | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| DS216      | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+| DS116      | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
+
 ### Download the script
 
 1. Download the latest version _Source code (zip)_ from https://github.com/007revad/ContainerManager_for_all_armv8/releases
