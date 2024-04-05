@@ -27,17 +27,17 @@ So I made a script to install the package from the DS424 on any model with a Rea
 
 ### Will NOT work on models with a 32 bit CPU
 
-| Model      | CPU | DSM version              | Working | Notes |
-| ---------- |-----|--------------------------|---------|-------|
-| DS419slim  | Marvell Armada 385 88F6820 |  | no |  |
-| DS218j     | Marvell Armada 385 88F6820 |  | no |  |
-| RS217      | Marvell Armada 385 88F6820 |  | no |  |
-| RS816      | Marvell Armada 385 88F6820 |  | no |  |
-| DS416slim  | Marvell Armada 385 88F6820 |  | no |  |
-| DS416j     | Marvell Armada 385 88F6820 |  | no |  |
-| DS216j     | Marvell Armada 385 88F6820 |  | no |  |
-| DS216      | Marvell Armada 385 88F6820 |  | no |  |
-| DS116      | Marvell Armada 385 88F6820 |  | no |  |
+| Model      | CPU | Package Arch | Working | Notes |
+| ---------- |-----|--------------|---------|-------|
+| DS419slim  | Marvell Armada 385 88F6820 | armada38x | no |  |
+| DS218j     | Marvell Armada 385 88F6820 | armada38x | no |  |
+| RS217      | Marvell Armada 385 88F6820 | armada38x | no |  |
+| RS816      | Marvell Armada 385 88F6820 | armada38x | no |  |
+| DS416slim  | Marvell Armada 385 88F6820 | armada38x | no |  |
+| DS416j     | Marvell Armada 385 88F6820 | armada38x | no |  |
+| DS216j     | Marvell Armada 385 88F6820 | armada38x | no |  |
+| DS216      | Marvell Armada 385 88F6820 | armada38x | no |  |
+| DS116      | Marvell Armada 385 88F6820 | armada38x | no |  |
 
 ### Download the script
 
