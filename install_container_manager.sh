@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.3.7"
+scriptver="v1.3.8"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -150,14 +150,14 @@ progstatus(){
 
     elif grep "Failed to query package list from server" /tmp/installcm.txt >/dev/null; then
         ding
-        echo -e "ERROR Failed to query package list from server!"
+        echo -e "${Error}ERROR${Off} Failed to query package list from server!"
         install_from_server_failed="yes"
 
     else
         ding
         echo -e "Line ${LINENO}: ${Error}ERROR${Off} $2 failed!"
         echo "$tracestring"        
-        [ -f /tmp/installcm.txt ] && xargs echo < /tmp/installcm.txt
+        [ -f /tmp/installcm.txt ] && xargs echo < /tmp/installcm.txt && echo ""
         if [[ $exitonerror != "no" ]]; then
             restore_unique
             exit 1  # Skip exit if exitonerror != no
@@ -177,10 +177,10 @@ package_status(){
     # DSM 7.2       0 = started, 17 = stopped, 255 = not_installed, 150 = broken
     # DSM 6 to 7.1  0 = started,  3 = stopped,   4 = not_installed, 150 = broken
     if [[ $code == "0" ]]; then
-        echo -e "$1 is started\n" >&2  # debug
+        #echo -e "$1 is started\n" >&2  # debug
         return 0
     elif [[ $code == "17" ]] || [[ $code == "3" ]]; then
-        echo -e "$1 is stopped\n" >&2  # debug
+        #echo -e "$1 is stopped\n" >&2  # debug
         return 1
     elif [[ $code == "255" ]] || [[ $code == "4" ]]; then
         echo -e "$1 is not installed\n" >&2  # debug
@@ -301,6 +301,8 @@ do_manual_install(){
         restore_unique
         exit
     fi
+    manual_install="yes"
+    echo ""
 }
 
 
@@ -320,7 +322,8 @@ fi
 synoinfo="/etc.defaults/synoinfo.conf"
 if [[ ! -f ${synoinfo}.bak ]]; then
     if cp "$synoinfo" "$synoinfo.bak"; then
-        echo -e "\nBacked up synoinfo.conf"
+        echo -e "Backed up synoinfo.conf\n"
+        chmod 755 "$synoinfo.bak"
     else
         ding
         echo -e "\n${Error}ERROR 5${Off} Failed to backup synoinfo.conf!"
@@ -329,6 +332,7 @@ if [[ ! -f ${synoinfo}.bak ]]; then
 fi
 
 
+# Select volume if there's more than 1
 if [[ -z $target ]]; then
     # Get list of available volumes
     volumes=( )
@@ -369,7 +373,7 @@ fi
 
 
 # Change unique to a supported model
-echo "Editing synoinfo.conf"
+echo -e "Editing synoinfo.conf\n"
 synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
 synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
 
@@ -384,7 +388,7 @@ if [[ $install_from_server_failed == "yes" ]]; then
 fi
 
 # Allow package processes to finish starting
-wait_status ContainerManager start
+#wait_status ContainerManager start
 
 
 # Stop Container Manager
@@ -395,11 +399,12 @@ wait_status ContainerManager stop
 
 
 # Edit /var/packages/ContainerManager/INFO to delete the "exclude_model=..." line
-echo "Editing ContainerManager INFO"
+if [[ $manual_install == "yes" ]]; then echo ""; fi
+echo -e "Editing ContainerManager INFO\n"
 sed -i "/exclude_model=*/d" /var/packages/ContainerManager/INFO
 
 # Restore unique to original model
-echo "Restoring synoinfo.conf"
+echo -e "Restoring synoinfo.conf\n"
 synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
 synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
 
