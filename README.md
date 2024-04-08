@@ -78,7 +78,7 @@ If the script instructs you to do a Manual Install:
 8. Close Package Center.
 9. Return to the script window and type **yes** so the script can restore the correct model number.
 
-<p align="left">Manual Install of Container Manager</p>
+<p align="center">Manual Install of Container Manager</p>
 <p align="center"><img src="/images/package_manual_install.png"></p>
 
 ### What to do after running the script
