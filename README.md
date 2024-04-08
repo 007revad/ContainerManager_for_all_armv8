@@ -57,7 +57,7 @@ sudo -s /volume1/scripts/install_container_manager.sh
 **Note:** Replace /volume1/scripts/ with the path to where the script is located.
 ### What to do after running the script
 
-1. Open Package Center.
+1. Open Package Center (if Package Center is already open close it and re-open it).
 2. Click on Settings.
 3. Click on Auto Update.
 4. Select "Only packages below".
