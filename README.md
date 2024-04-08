@@ -19,9 +19,9 @@ So I made a script to install the ContainerManager-armv8 package on any model wi
 | ---------- |-----|--------------------------|---------|-------|
 | RS819      | Realtek RTD1296 |  | ? |  |
 | DS119j     | Marvell A3720 |  | ? |  |
-| DS418      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | no | 1 person |
+| DS418      | Realtek RTD1296 | DSM 7.2.1-69057 Update 4 | yes |  |
 | DS418j     | Realtek RTD129**3** ? |  | ? |  |
-| DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes | 1 person |
+| DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes |  |
 | DS218play  | Realtek RTD1296 |  | ? |  |
 | DS118      | Realtek RTD1296 |  | ? |  |
 
