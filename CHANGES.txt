@@ -3,7 +3,7 @@ v1.3.6
   - Script now pauses so you can do a manual package install.
   - Explains how to do a manual package install.
 - Added message to close and re-open Package Center if you have it open.
-- Backs up synoinfo.conf in case the original model number is needed.
+- Backs up synoinfo.conf in case the original unique stringr is needed.
 - Save the output from synopkg to /tmp/installcm.txt for debugging if needed.
 - Minor improvements.
 
