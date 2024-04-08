@@ -67,9 +67,7 @@ The script will try to install Container Manager itself.
 If you get a _"Failed to query package list from server"_ error the script will pause and wait for you to do a Manual Install, and then the script will continue after you type **yes**. Do **NOT** exit the script or close the window.
 
 <details>
-  <summary>Click here to see list of models with a 32 bit armv71 CPU</summary>
-
-If the script instructs you to do a Manual Install:
+  <summary>Click here to see the steps to do if the script instructs you to do a Manual Install</summary>
 
 1. Download the latest **ContainerManager-armv8** spk file from https://archive.synology.com/download/Package/ContainerManager
 2. Open Package Center. If it is already open close it and re-open it.
