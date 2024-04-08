@@ -66,9 +66,11 @@ sudo -s /volume1/scripts/install_container_manager.sh
 
 The script will try to install Container Manager itself. 
 
-If you get a _"Failed to query package list from server"_ error the script will pause and wait for you to do a Manual Install, and then the script will continue after you type **yes**. Do **NOT** exit the script or close the window.
+If you get a _"Failed to query package list from server"_ error the script will pause and wait for you to do a Manual Install, and then the script will continue after you type **yes**.
 
 ### Steps to do a Manual Install if the scripts asks you to: <br>
+
+Do **NOT** exit the script or close the window.
 
 1. Download the latest **ContainerManager-armv8** spk file from https://archive.synology.com/download/Package/ContainerManager
 2. Open Package Center. If it is already open close it and re-open it.
