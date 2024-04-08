@@ -76,8 +76,7 @@ If the script instructs you to do a Manual Install:
 6. Select the spk file and click Open.
 7. Click Next and install Container Manager.
 8. Close Package Center.
-9. Return to this window so the script can restore the correct model number.
-10. Type ${Cyan}yes${Off} after you have manually installed Container Manager.
+9. Return to the script window and type **yes** so the script can restore the correct model number.
 
 <p align="left">Manual Install of Container Manager</p>
 <p align="center"><img src="/images/package_manual_install.png"></p>
