@@ -64,7 +64,7 @@ sudo -s /volume1/scripts/install_container_manager.sh
 
 The script will try to install Container Manager itself. 
 
-If you get a "Failed to query package list from server" error it will pause and wait for you to do a Manual Install, and then continue after you type **yes**.
+If you get a __"Failed to query package list from server"__ error the script will pause and wait for you to do a Manual Install, and then continue after you type **yes**. Do **NOT** exit the script or close the window.
 
 If the script instructs you to do a Manual Install:
 
