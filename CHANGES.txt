@@ -1,4 +1,10 @@
 v1.3.8 - (8 Apr 2024)
+- Improved formatting of script output.
+
+v1.3.7 - (8 Apr 2024)
+- Changed to restore unique model string before exiting if installing Container Manager failed and user did not type yes.
+
+v1.3.6 - (8 Apr 2024)
 - If Container Manager failed to install due to "Failed to query package list from server" error:
   - Script now pauses so you can do a manual package install.
   - Explains how to do a manual package install.
