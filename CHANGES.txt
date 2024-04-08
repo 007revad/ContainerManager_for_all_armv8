@@ -1,16 +1,28 @@
-v1.2.5
+v1.3.7 - (8 Apr 2024)
+- Changed to restore unique model string before exiting if installing Container Manager failed and user did not type yes.
+
+v1.3.6 - (8 Apr 2024)
+- If Container Manager failed to install due to "Failed to query package list from server" error:
+  - Script now pauses so you can do a manual package install.
+  - Explains how to do a manual package install.
+- Added message to close and re-open Package Center if you have it open.
+- Backs up synoinfo.conf in case the original unique string is needed.
+- Save the output from synopkg to /tmp/installcm.txt for debugging if needed.
+- Minor improvements.
+
+v1.2.5 - (5 Apr 2024)
 - Changed to check if CPU is armv8 as well as in Synology's excluded model list.
 - Better error message if CPU is armv7.
 - Better error message if CPU is x86_64.
 
-v1.2.4
+v1.2.4 - (31 Mar 2024)
 - Changed to restore unique model string before exiting if installing Container Manager failed.
 
-v1.1.3
+v1.1.3 - (31 Mar 2024)
 - Bug fix for script incorrectly saying Container Manager is already installed.
 
-v1.0.2
+v1.0.2 - (31 Mar 2024)
 - First release of script to install Container Manager on armv8 NAS.
 
-20.10.23-1437
+20.10.23-1437 - (17 Feb 2024)
 - Package for armv8 Synology NAS - Did not work...

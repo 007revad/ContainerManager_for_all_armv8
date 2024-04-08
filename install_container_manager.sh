@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.2.5"
+scriptver="v1.3.8"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -77,7 +77,7 @@ echo -e "$model DSM $productversion-$buildnumber$smallfix $buildphase"
 # Check DSM version
 if [[ ! $majorversion -ge "7" ]] && [[ ! $minorversion -ge "2" ]]; then
     echo -e "This script requires DSM 7.2 or later.\n"
-    exit 1  # Mot DSM 7.2 or later
+    exit 1  # Not DSM 7.2 or later
 fi
 
 # Get CPU arch
@@ -92,7 +92,7 @@ if [[ $arch == "armv71" ]]; then
     echo -e "Container Manager is not available for 32-bit CPUs.\n"
     exit
 elif [[ $arch == "x86_64" ]]; then
-    echo -e "This script is only for armv8 CPUs.\n"
+    echo -e "This script is only for ARMv8 CPUs.\n"
     exit
 fi
 
@@ -104,7 +104,7 @@ exclude_list+=("synology_rtd1296_rs819")
 
 # Check if this model needs this script
 if [[ ! ${exclude_list[*]} =~ "$current_unique" ]]; then
-    echo -e "You don't need this script for your $current_unique\n"
+    echo -e "You don't need this script for your $model\n"
     exit
 fi
 
@@ -147,10 +147,17 @@ progstatus(){
     [ "$trace" == "yes" ] && printf '%.*s' 80 "${tracestring}${pad}" && echo ""
     if [[ $1 == "0" ]]; then
         echo -e "$2            "
+
+    elif grep "Failed to query package list from server" /tmp/installcm.txt >/dev/null; then
+        ding
+        echo -e "${Error}ERROR${Off} Failed to query package list from server!"
+        install_from_server_failed="yes"
+
     else
         ding
         echo -e "Line ${LINENO}: ${Error}ERROR${Off} $2 failed!"
-        echo "$tracestring"
+        echo "$tracestring"        
+        [ -f /tmp/installcm.txt ] && xargs echo < /tmp/installcm.txt && echo ""
         if [[ $exitonerror != "no" ]]; then
             restore_unique
             exit 1  # Skip exit if exitonerror != no
@@ -170,10 +177,10 @@ package_status(){
     # DSM 7.2       0 = started, 17 = stopped, 255 = not_installed, 150 = broken
     # DSM 6 to 7.1  0 = started,  3 = stopped,   4 = not_installed, 150 = broken
     if [[ $code == "0" ]]; then
-        echo -e "$1 is started\n" >&2  # debug
+        #echo -e "$1 is started\n" >&2  # debug
         return 0
     elif [[ $code == "17" ]] || [[ $code == "3" ]]; then
-        echo -e "$1 is stopped\n" >&2  # debug
+        #echo -e "$1 is stopped\n" >&2  # debug
         return 1
     elif [[ $code == "255" ]] || [[ $code == "4" ]]; then
         echo -e "$1 is not installed\n" >&2  # debug
@@ -252,7 +259,8 @@ package_start(){
 package_uninstall(){ 
     # $1 is package name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
-    /usr/syno/bin/synopkg uninstall "$1" >/dev/null &
+    #/usr/syno/bin/synopkg uninstall "$1" >/dev/null &
+    /usr/syno/bin/synopkg uninstall "$1" >/tmp/installcm.txt &
     pid=$!
     string="Uninstalling ${Cyan}${1}${Off}"
     progbar "$pid" "$string"
@@ -265,12 +273,36 @@ package_install(){
     # $1 is package name
     # $2 is /volume2 etc
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
-    /usr/syno/bin/synopkg install_from_server "$1" "$2" >/dev/null &
+    #/usr/syno/bin/synopkg install_from_server "$1" "$2" >/dev/null &
+    /usr/syno/bin/synopkg install_from_server "$1" "$2" >/tmp/installcm.txt &
     pid=$!
     string="Installing ${Cyan}${1}${Off} on ${Cyan}$2${Off}"
     progbar "$pid" "$string"
     wait "$pid"
     progstatus "$?" "$string" "line ${LINENO}"
+}
+
+do_manual_install(){ 
+    echo -e "\nDo ${Error}NOT${Off} exit the script or close this window.\n"
+    echo -e "Please do a manual install:\n"
+    echo -e "  1. Download the latest ContainerManager-${Cyan}armv8${Off} spk file from:"
+    echo "     https://archive.synology.com/download/Package/ContainerManager"
+    echo -e "  2. Open Package Center."
+    echo -e "  3. Click on the Manual Install button."
+    echo -e "  4. Click on the Browse button."
+    echo -e "  5. Browse to where you saved the ContainerManager spk file."
+    echo -e "  6. Select the spk file and click Open."
+    echo -e "  7. Click Next and install Container Manager."
+    echo -e "  8. Close Package Center."
+    echo -e "  9. Return to this window so the script can restore the correct model number."
+    echo -e "  10. Type ${Cyan}yes${Off} after you have manually installed Container Manager."
+    read -r answer
+    if [[ ${answer,,} != "yes" ]]; then
+        restore_unique
+        exit
+    fi
+    manual_install="yes"
+    echo ""
 }
 
 
@@ -286,7 +318,21 @@ if [[ $code != "255" ]]; then
     exit
 fi
 
+# Backup synoinfo.conf if needed
+synoinfo="/etc.defaults/synoinfo.conf"
+if [[ ! -f ${synoinfo}.bak ]]; then
+    if cp "$synoinfo" "$synoinfo.bak"; then
+        echo -e "Backed up synoinfo.conf\n"
+        chmod 755 "$synoinfo.bak"
+    else
+        ding
+        echo -e "\n${Error}ERROR 5${Off} Failed to backup synoinfo.conf!"
+        exit 1
+    fi
+fi
 
+
+# Select volume if there's more than 1
 if [[ -z $target ]]; then
     # Get list of available volumes
     volumes=( )
@@ -327,7 +373,7 @@ fi
 
 
 # Change unique to a supported model
-echo "Editing synoinfo.conf"
+echo -e "Editing synoinfo.conf\n"
 synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
 synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
 
@@ -337,9 +383,12 @@ synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
 #
 # Install Container Manager
 package_install ContainerManager "$targetvol"
+if [[ $install_from_server_failed == "yes" ]]; then
+    do_manual_install
+fi
 
 # Allow package processes to finish starting
-wait_status ContainerManager start
+#wait_status ContainerManager start
 
 
 # Stop Container Manager
@@ -350,11 +399,12 @@ wait_status ContainerManager stop
 
 
 # Edit /var/packages/ContainerManager/INFO to delete the "exclude_model=..." line
-echo "Editing ContainerManager INFO"
+if [[ $manual_install == "yes" ]]; then echo ""; fi
+echo -e "Editing ContainerManager INFO\n"
 sed -i "/exclude_model=*/d" /var/packages/ContainerManager/INFO
 
 # Restore unique to original model
-echo "Restoring synoinfo.conf"
+echo -e "Restoring synoinfo.conf\n"
 synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
 synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
 
@@ -363,6 +413,8 @@ synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
 package_start ContainerManager "Container Manager"
 
 echo -e "\nFinished\n"
+
+echo -e "If Package Center is already open close it and re-open it.\n"
 
 echo "You need to prevent Container Manager from auto updating:"
 echo "  1. Go to 'Package Center > Settings > Auto-update'"

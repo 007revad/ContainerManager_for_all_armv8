@@ -11,7 +11,7 @@ Script to install Container Manager on a RS819, DS119j, DS418, DS418j, DS218, DS
 
 There is no technical reason why these NAS models with a Realtek RTD1296, or Marvell A3720, CPU are excluded from installing Container Manager when they have the same CPU as the DS220j, or DS120j.
 
-So I made a script to install the package from the DS424 on any model with a Realtek RTD1296 (or Marvell A3720?) CPU running DSM 7.2 or later.
+So I made a script to install the ContainerManager-armv8 package on any model with a Realtek RTD1296 (or Marvell A3720?) CPU running DSM 7.2 or later.
 
 ### Confirmed working on
 
@@ -27,6 +27,11 @@ So I made a script to install the package from the DS424 on any model with a Rea
 
 ### Will NOT work on models with a 32 bit CPU
 
+<details>
+  <summary>Click here to see list of models with a 32 bit armv71 CPU</summary>
+
+<br>
+
 | Model      | CPU | Package Arch |  | uname -m | Working |
 | ---------- |-----|--------------|--|----------|---------|
 | DS419slim  | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
@@ -39,11 +44,12 @@ So I made a script to install the package from the DS424 on any model with a Rea
 | DS216      | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
 | DS116      | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
 
+</details>
+
 ### Download the script
 
 1. Download the latest version _Source code (zip)_ from https://github.com/007revad/ContainerManager_for_all_armv8/releases
 2. Save the download zip file to a folder on the Synology.
-    - Do ***NOT*** save the script to a M.2 volume.
 3. Unzip the zip file.
 
 ### To run the script via SSH
@@ -55,9 +61,33 @@ sudo -s /volume1/scripts/install_container_manager.sh
 ```
 
 **Note:** Replace /volume1/scripts/ with the path to where the script is located.
+
+### When you run the script
+
+The script will try to install Container Manager itself. 
+
+If you get a _"Failed to query package list from server"_ error the script will pause and wait for you to do a Manual Install, and then the script will continue after you type **yes**.
+
+### Steps to do a Manual Install if the scripts asks you to: <br>
+
+Do **NOT** exit the script or close the window.
+
+1. Download the latest **ContainerManager-armv8** spk file from https://archive.synology.com/download/Package/ContainerManager
+2. Open Package Center. If it is already open close it and re-open it.
+3. Click on the Manual Install button.
+4. Click on the Browse button.
+5. Browse to where you saved the ContainerManager spk file.
+6. Select the spk file and click Open.
+7. Click Next and install Container Manager.
+8. Close Package Center.
+9. Return to the script window and type **yes** so the script can restore the correct model number.
+
+<p align="center">Manual Install of Container Manager</p>
+<p align="center"><img src="/images/package_manual_install.png"></p>
+
 ### What to do after running the script
 
-1. Open Package Center.
+1. Open Package Center (if Package Center is already open close it and re-open it).
 2. Click on Settings.
 3. Click on Auto Update.
 4. Select "Only packages below".
@@ -67,3 +97,11 @@ sudo -s /volume1/scripts/install_container_manager.sh
 
 <p align="center">Prevent Container Manager from auto updating</p>
 <p align="center"><img src="/images/disable_auto_updates.png"></p>
+
+### Screenshots
+
+<p align="center">Installing Container Manager</p>
+<p align="center"><img src="/images/script_install_auto.png"></p>
+
+<p align="center">Installing Container Manager via Manual Install</p>
+<p align="center"><img src="/images/script_install_manual.png"></p>
