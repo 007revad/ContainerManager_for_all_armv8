@@ -68,7 +68,7 @@ If you get a _"Failed to query package list from server"_ error the script will 
 
 If the script instructs you to do a Manual Install:
 
-1. Download the latest ContainerManager-**armv8** spk file from https://archive.synology.com/download/Package/ContainerManager
+1. Download the latest **ContainerManager-armv8** spk file from https://archive.synology.com/download/Package/ContainerManager
 2. Open Package Center. If it is already open close it and re-open it.
 3. Click on the Manual Install button.
 4. Click on the Browse button.
