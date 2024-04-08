@@ -102,3 +102,6 @@ Do **NOT** exit the script or close the window.
 
 <p align="center">Installing Container Manager</p>
 <p align="center"><img src="/images/script_install_auto.png"></p>
+
+<p align="center">Installing Container Manager via Manual Install</p>
+<p align="center"><img src="/images/script_install_manual.png"></p>
