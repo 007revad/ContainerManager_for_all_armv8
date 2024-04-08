@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.3.6"
+scriptver="v1.3.7"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -147,12 +147,12 @@ progstatus(){
     [ "$trace" == "yes" ] && printf '%.*s' 80 "${tracestring}${pad}" && echo ""
     if [[ $1 == "0" ]]; then
         echo -e "$2            "
-        
+
     elif grep "Failed to query package list from server" /tmp/installcm.txt >/dev/null; then
         ding
         echo -e "ERROR Failed to query package list from server!"
         install_from_server_failed="yes"
-    
+
     else
         ding
         echo -e "Line ${LINENO}: ${Error}ERROR${Off} $2 failed!"
@@ -285,10 +285,10 @@ package_install(){
 do_manual_install(){ 
     echo -e "\nDo ${Error}NOT${Off} exit the script or close this window.\n"
     echo -e "Please do a manual install:\n"
-    echo -e "  1. Download the latest ${Cyan}armv8${Off} Container Manager package from:"
+    echo -e "  1. Download the latest ContainerManager-${Cyan}armv8${Off} spk file from:"
     echo "     https://archive.synology.com/download/Package/ContainerManager"
     echo -e "  2. Open Package Center."
-    echo -e "  3. Click on the "Manual Install" button."
+    echo -e "  3. Click on the Manual Install button."
     echo -e "  4. Click on the Browse button."
     echo -e "  5. Browse to where you saved the ContainerManager spk file."
     echo -e "  6. Select the spk file and click Open."
@@ -297,7 +297,10 @@ do_manual_install(){
     echo -e "  9. Return to this window so the script can restore the correct model number."
     echo -e "  10. Type ${Cyan}yes${Off} after you have manually installed Container Manager."
     read -r answer
-    if [[ ${answer,,} != "yes" ]]; then exit; fi
+    if [[ ${answer,,} != "yes" ]]; then
+        restore_unique
+        exit
+    fi
 }
 
 
