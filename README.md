@@ -30,6 +30,8 @@ So I made a script to install the ContainerManager-armv8 package on any model wi
 <details>
   <summary>Click here to see list of models with a 32 bit armv71 CPU</summary>
 
+<br>
+
 | Model      | CPU | Package Arch |  | uname -m | Working |
 | ---------- |-----|--------------|--|----------|---------|
 | DS419slim  | Marvell Armada 385 88F6820 | armada38x | 32 bit | armv71 | no |
@@ -69,7 +71,9 @@ If you get a _"Failed to query package list from server"_ error the script will 
 <details>
   <summary>Click here to see the steps to do if the script instructs you to do a Manual Install</summary>
 
-Steps to do a Manual Install if the scripts aks you to:
+<br>
+
+Steps to do a Manual Install if the scripts aks you to: <br>
 
 1. Download the latest **ContainerManager-armv8** spk file from https://archive.synology.com/download/Package/ContainerManager
 2. Open Package Center. If it is already open close it and re-open it.
