@@ -97,3 +97,8 @@ Do **NOT** exit the script or close the window.
 
 <p align="center">Prevent Container Manager from auto updating</p>
 <p align="center"><img src="/images/disable_auto_updates.png"></p>
+
+### Screenshots
+
+<p align="center">Installing Container Manager</p>
+<p align="center"><img src="/images/script_install_auto.png"></p>
