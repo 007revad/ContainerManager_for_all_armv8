@@ -1,3 +1,12 @@
+v1.3.6
+- If Container Manager failed to install due to "Failed to query package list from server" error:
+  - Script now pauses so you can do a manual package install.
+  - Explains how to do a manual package install.
+- Added message to close and re-open Package Center if you have it open.
+- Backs up synoinfo.conf in case the original model number is needed.
+- Save the output from synopkg to /tmp/installcm.txt for debugging if needed.
+- Minor improvements.
+
 v1.2.5
 - Changed to check if CPU is armv8 as well as in Synology's excluded model list.
 - Better error message if CPU is armv7.
