@@ -23,7 +23,7 @@ So I made a script to install the ContainerManager-armv8 package on any model wi
 | DS418j     | Realtek RTD129**3** |  | ? |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes |  |
 | DS218play  | Realtek RTD1296 |  | ? |  |
-| DS118      | Realtek RTD1296 |  | ? |  |
+| DS118      | Realtek RTD1296 | DSM 7.2.1-69057 Update 1 | yes |  |
 
 ### Will NOT work on models with a 32 bit CPU
 
