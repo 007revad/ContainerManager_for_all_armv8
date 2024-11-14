@@ -14,6 +14,8 @@ There is no technical reason why these NAS models with a Realtek RTD1296, or Mar
 
 So I made a script to install the ContainerManager-armv8 package on any model with a Realtek RTD1296 (or Marvell A3720?) CPU running DSM 7.2 or later.
 
+v2 and later can now update Container Mananger if there's a newer version available.
+
 ### Confirmed working on
 
 | Model      | CPU | DSM version              | Working | Notes |
