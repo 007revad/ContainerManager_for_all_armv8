@@ -1,3 +1,6 @@
+v2.0.9 - (14 Nov 2024)
+- Can now update Container Manager when there's a new version available.
+
 v1.3.8 - (8 Apr 2024)
 - Improved formatting of script output.
 

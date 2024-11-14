@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v1.3.8"
+scriptver="v2.0.9"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -90,10 +90,10 @@ echo -e "$current_unique\n"
 # Check if arch is armv8
 if [[ $arch == "armv71" ]]; then
     echo -e "Container Manager is not available for 32-bit CPUs.\n"
-    exit
+    exit 1  # 32-bit CPU
 elif [[ $arch == "x86_64" ]]; then
     echo -e "This script is only for ARMv8 CPUs.\n"
-    exit
+    exit 1  # x86_64
 fi
 
 # List of models that need this script
@@ -105,7 +105,7 @@ exclude_list+=("synology_rtd1296_rs819")
 # Check if this model needs this script
 if [[ ! ${exclude_list[*]} =~ "$current_unique" ]]; then
     echo -e "You don't need this script for your $model\n"
-    exit
+    exit  # Model has Container Manager available
 fi
 
 
@@ -258,11 +258,12 @@ package_start(){
 # shellcheck disable=SC2317  # Don't warn about unreachable commands in this function
 package_uninstall(){ 
     # $1 is package name
+    # $2 is package display name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
     #/usr/syno/bin/synopkg uninstall "$1" >/dev/null &
     /usr/syno/bin/synopkg uninstall "$1" >/tmp/installcm.txt &
     pid=$!
-    string="Uninstalling ${Cyan}${1}${Off}"
+    string="Uninstalling ${Cyan}${2}${Off}"
     progbar "$pid" "$string"
     wait "$pid"
     progstatus "$?" "$string" "line ${LINENO}"
@@ -272,11 +273,12 @@ package_uninstall(){
 package_install(){ 
     # $1 is package name
     # $2 is /volume2 etc
+    # $3 is package display name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
     #/usr/syno/bin/synopkg install_from_server "$1" "$2" >/dev/null &
     /usr/syno/bin/synopkg install_from_server "$1" "$2" >/tmp/installcm.txt &
     pid=$!
-    string="Installing ${Cyan}${1}${Off} on ${Cyan}$2${Off}"
+    string="Installing ${Cyan}${3}${Off} on ${Cyan}$2${Off}"
     progbar "$pid" "$string"
     wait "$pid"
     progstatus "$?" "$string" "line ${LINENO}"
@@ -311,11 +313,39 @@ package_status ContainerManager >/dev/null
 code="$?"
 #if [[ $(package_status ContainerManager) != "255" ]]; then
 if [[ $code != "255" ]]; then
+    # Container Manager is installed
     target=$(readlink "/var/packages/ContainerManager/target")
     targetvol="/$(printf %s "${target:?}" | cut -d'/' -f2 )"
     #targetvol="$(printf %s "${target:?}" | cut -d'/' -f2 )"
-    echo -e "Container Manager already installed on $targetvol\n"
-    exit
+
+    # Check if newer version available
+    archive_url="https://archive.synology.com/download/Package/ContainerManager"
+        latest_version="$(curl --silent "$archive_url" |\
+        grep 'href="/download/Package/ContainerManager' |\
+        cut -d">" -f2 | cut -d"<" -f1 | head -n 1)"
+    installed_version="$(synogetkeyvalue /var/packages/ContainerManager/INFO version)"
+
+    new_build="$(echo "$latest_version" | cut -d"-" -f2)"
+    old_build="$(echo "$installed_version" | cut -d"-" -f2)"
+
+    if [[ $new_build -gt "$old_build" ]]; then
+        echo "New Container Manager version available:"
+        echo "  Latest version is: $latest_version"
+        echo "  Installed version: $installed_version"
+        echo -e "Do you want to update to $latest_version [y/n]"
+        read -r reply
+        if [[ ${reply,,} == "y" ]]; then
+            upgrade="yes"
+        else
+            # User did not answer yes
+            exit 1  # User answered no to upgrading Container Manager
+        fi
+        echo ""
+    else
+        echo "Container Manager already installed on $targetvol"
+        echo -e "No new version available\n"
+        exit 1  # Container Manager already installed
+    fi
 fi
 
 # Backup synoinfo.conf if needed
@@ -327,44 +357,51 @@ if [[ ! -f ${synoinfo}.bak ]]; then
     else
         ding
         echo -e "\n${Error}ERROR 5${Off} Failed to backup synoinfo.conf!"
-        exit 1
+        exit 1  # Backup failed
     fi
 fi
 
 
 # Select volume if there's more than 1
 if [[ -z $target ]]; then
-    # Get list of available volumes
-    volumes=( )
-    for v in /volume*; do
-        # Ignore /volumeUSB# and /volume0
-        if [[ $v =~ /volume[1-9][0-9]?$ ]]; then
-            # Ignore unmounted volumes
-            if df -h | grep "$v" >/dev/null ; then
-                volumes+=("$v")
-            fi
-        fi
-    done
-
-    # Select volume to install Container Manager on
-    if [[ ${#volumes[@]} -gt 1 ]]; then
-        PS3="Select the volume to install Container Manager on: "
-        select targetvol in "${volumes[@]}"; do
-            if [[ $targetvol ]]; then
-                if [[ -d $targetvol ]]; then
-                    echo -e "You selected ${Cyan}${targetvol}${Off}\n"
-                    break
-                else
-                    ding
-                    echo -e "${Error}ERROR${Off} $targetvol not found!"
-                    exit 1
+    if [[ $upgrade != "yes" ]]; then
+        # Get list of available volumes
+        volumes=( )
+        for v in /volume*; do
+            # Ignore /volumeUSB# and /volume0
+            if [[ $v =~ /volume[1-9][0-9]?$ ]]; then
+                # Ignore unmounted volumes
+                if df -h | grep "$v" >/dev/null ; then
+                    volumes+=("$v")
                 fi
-            else
-                echo "Invalid choice!"
             fi
         done
-    elif [[ ${#volumes[@]} -eq 1 ]]; then
-        targetvol="${volumes[0]}"
+
+        # Select volume to install Container Manager on
+        if [[ ${#volumes[@]} -gt 1 ]]; then
+            PS3="Select the volume to install Container Manager on: "
+            select targetvol in "${volumes[@]}"; do
+                if [[ $targetvol ]]; then
+                    if [[ -d $targetvol ]]; then
+                        echo -e "You selected ${Cyan}${targetvol}${Off}\n"
+                        break
+                    else
+                        ding
+                        echo -e "${Error}ERROR${Off} $targetvol not found!"
+                        exit 1  # Target volume not found
+                    fi
+                else
+                    echo "Invalid choice!"
+                fi
+            done
+        elif [[ ${#volumes[@]} -eq 1 ]]; then
+            targetvol="${volumes[0]}"
+        fi
+    else
+        link="$(readlink /var/packages/ContainerManager/target | cut -d"/" -f2)"
+        if [[ $link ]]; then
+            targetvol="/$link"
+        fi
     fi
 fi
 
@@ -378,11 +415,17 @@ synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
 synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
 
 
+# Uninstall Container Manager if upgrading
+if [[ $upgrade == "yes" ]]; then
+    echo "Upgrading Container Manager"
+    package_uninstall ContainerManager "Container Manager"
+fi
+
 # ? Download https://global.synologydownload.com/download/Package/spk/ContainerManager/20.10.23-1437/ContainerManager-armv8-20.10.23-1437.spk
 # ? Do a Manual Install in Package Center of the .spk file you downloaded.
 #
 # Install Container Manager
-package_install ContainerManager "$targetvol"
+package_install ContainerManager "$targetvol" "Container Manager"
 if [[ $install_from_server_failed == "yes" ]]; then
     do_manual_install
 fi
@@ -413,6 +456,10 @@ synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
 package_start ContainerManager "Container Manager"
 
 echo -e "\nFinished\n"
+
+if [[ $upgrade == "yes" ]]; then
+    echo -e "You will need to start your containers\n"
+fi
 
 echo -e "If Package Center is already open close it and re-open it.\n"
 
