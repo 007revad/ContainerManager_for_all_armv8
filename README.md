@@ -28,6 +28,7 @@ v2 and later can now update Container Mananger if there's a newer version availa
 | DS418j     | Realtek RTD129**3** | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes |  |
+| DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 6 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS118      | Realtek RTD1296 | DSM 7.2.1-69057 Update 1 | yes |  |
 
