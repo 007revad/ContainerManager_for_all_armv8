@@ -1,5 +1,5 @@
 v2.0.10 - (26 Jul 2025)
-- Changed `timeout 5.0m` to `timeout 5m`. Issue #72
+- Changed `timeout 5.0m` to `timeout 5m`. https://github.com/007revad/Video_Station_for_DSM_722/issues/72
 
 v2.0.9 - (14 Nov 2024)
 - Can now update Container Manager when there's a new version available.
