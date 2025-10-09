@@ -22,7 +22,7 @@ v2 and later can now update Container Mananger if there's a newer version availa
 | ---------- |-----|--------------------------|---------|-------|
 | RS819      | Realtek RTD1296 | DSM 7.2.2-72803 | yes |  |
 | DS119j     | Marvell A3720 | DSM 7.2.2-72806 Update 2 | yes |  |
-| DS418      | Realtek RTD1296 | DSM 7.3-81180 | yes | ContainerManager v24.0.2-1606 |
+| DS418      | Realtek RTD1296 | DSM 7.3-81180 | yes | ContainerManager 24.0.2-1606 |
 | DS418      | Realtek RTD1296 | DSM 7.2.2-72806 Update 3 | yes |  |
 | DS418      | Realtek RTD1296 | DSM 7.2.2-72806 Update 2 | yes |  |
 | DS418      | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
@@ -30,7 +30,7 @@ v2 and later can now update Container Mananger if there's a newer version availa
 | DS418j     | Realtek RTD129**3** | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes |  |
-| DS218play  | Realtek RTD1296 | DSM 7.3-81180 | yes | ContainerManager v24.0.2-1606 |
+| DS218play  | Realtek RTD1296 | DSM 7.3-81180 | yes | ContainerManager 24.0.2-1606 |
 | DS218play  | Realtek RTD1296 | DSM 7.2.2-72806 Update 3 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 6 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
