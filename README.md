@@ -1,7 +1,7 @@
 # Container Manager for all armv8
 
 <a href="https://github.com/007revad/ContainerManager_for_all_armv8/releases"><img src="https://img.shields.io/github/release/007revad/ContainerManager_for_all_armv8.svg"></a>
-<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2F007revad%2FContainerManager_for_all_armv8&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false"/></a>
+![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2F007revad%2FContainerManager_for_all_armv8&label=Visitors&icon=github&color=%23198754&message=&style=flat&tz=Australia%2FSydney)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/007revad)
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/007revad)
 [![committers.top badge](https://user-badge.committers.top/australia/007revad.svg)](https://user-badge.committers.top/australia/007revad)
@@ -22,6 +22,7 @@ v2 and later can now update Container Mananger if there's a newer version availa
 | ---------- |-----|--------------------------|---------|-------|
 | RS819      | Realtek RTD1296 | DSM 7.2.2-72803 | yes |  |
 | DS119j     | Marvell A3720 | DSM 7.2.2-72806 Update 2 | yes |  |
+| DS418      | Realtek RTD1296 | DSM 7.3-81180 | yes | ContainerManager 24.0.2-1606 |
 | DS418      | Realtek RTD1296 | DSM 7.2.2-72806 Update 3 | yes |  |
 | DS418      | Realtek RTD1296 | DSM 7.2.2-72806 Update 2 | yes |  |
 | DS418      | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
@@ -29,6 +30,7 @@ v2 and later can now update Container Mananger if there's a newer version availa
 | DS418j     | Realtek RTD129**3** | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
 | DS218      | Realtek RTD1296 | DSM 7.2.1-69057 Update 3 | yes |  |
+| DS218play  | Realtek RTD1296 | DSM 7.3-81180 | yes | ContainerManager 24.0.2-1606 |
 | DS218play  | Realtek RTD1296 | DSM 7.2.2-72806 Update 3 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 6 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
