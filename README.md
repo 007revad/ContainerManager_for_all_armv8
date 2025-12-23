@@ -16,6 +16,10 @@ So I made a script to install the ContainerManager-armv8 package on any model wi
 
 v2 and later can now update Container Mananger if there's a newer version available.
 
+### Requirements
+
+DSM 7.2 or later.
+
 ### Confirmed working on
 
 | Model      | CPU | DSM version              | Working | Notes |
