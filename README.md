@@ -39,6 +39,7 @@ DSM 7.2 or later.
 | DS218play  | Realtek RTD1296 | DSM 7.2.2-72806 Update 3 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 6 | yes |  |
 | DS218play  | Realtek RTD1296 | DSM 7.2.1-69057 Update 5 | yes |  |
+| DS118      | Realtek RTD1296 | DSM 7.3.2-86009 | yes | ContainerManager 24.0.2-1606 |
 | DS118      | Realtek RTD1296 | DSM 7.2.1-69057 Update 1 | yes |  |
 
 ### Will NOT work on models with a 32 bit CPU
