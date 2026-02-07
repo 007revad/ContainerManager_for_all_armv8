@@ -1,3 +1,8 @@
+v2.0.11 - (8 Feb 2026)
+- Changed to try to prevent SSH connection closing due to inactivity.
+- Change to automatically finish the remaining steps if the script didn't finish last time.
+  -  If you need to do a manual install of Container Manager and the shell/terminal has closed just run the script again.
+
 v2.0.10 - (26 Jul 2025)
 - Changed `timeout 5.0m` to `timeout 5m`. https://github.com/007revad/Video_Station_for_DSM_722/issues/72
 
