@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v2.0.10"
+scriptver="v2.0.11"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -87,6 +87,11 @@ arch="$(uname -m)"; echo "CPU is $arch"
 current_unique="$(synogetkeyvalue /etc.defaults/synoinfo.conf unique)"
 echo -e "$current_unique\n"
 
+real_unique="$(uname -a | awk '{print $NF}')"
+if [[ $real_unique != $current_unique ]]; then
+    recover="yes"
+fi
+
 # Check if arch is armv8
 if [[ $arch == "armv71" ]]; then
     echo -e "Container Manager is not available for 32-bit CPUs.\n"
@@ -103,9 +108,9 @@ exclude_list+=("synology_rtd1296_ds418j" "synology_armada37xx_ds119j")
 exclude_list+=("synology_rtd1296_rs819")
 
 # Check if this model needs this script
-if [[ ! ${exclude_list[*]} =~ "$current_unique" ]]; then
+if [[ ! ${exclude_list[*]} =~ "$real_unique" ]]; then
     echo -e "You don't need this script for your $model\n"
-    exit  # Model has Container Manager available
+    exit 1  # Model has Container Manager available
 fi
 
 
@@ -113,8 +118,8 @@ restore_unique(){
     # Restore unique to original model
     if [[ -n $current_unique ]]; then
         echo "Restoring synoinfo.conf"
-        synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
-        synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
+        synosetkeyvalue /etc/synoinfo.conf unique "$real_unique"
+        synosetkeyvalue /etc.defaults/synoinfo.conf unique "$real_unique"
     fi
 }
 
@@ -174,22 +179,25 @@ package_status(){
     local code
     /usr/syno/bin/synopkg status "${1}" >/dev/null
     code="$?"
-    # DSM 7.2       0 = started, 17 = stopped, 255 = not_installed, 150 = broken
-    # DSM 6 to 7.1  0 = started,  3 = stopped,   4 = not_installed, 150 = broken
+    # DSM 7.2       0 = started, 55 = starting, 17 = stopped, 255 = not_installed, 150 = broken
+    # DSM 6 to 7.1  0 = started,  4 = starting,  3 = stopped,   4 = not_installed, 150 = broken
     if [[ $code == "0" ]]; then
-        #echo -e "$1 is started\n" >&2  # debug
+        #echo "$1 is started"  # debug
         return 0
+    elif [[ $code == "55" ]]; then
+        #echo "$1 is starting"  # debug
+        return 55
     elif [[ $code == "17" ]] || [[ $code == "3" ]]; then
-        #echo -e "$1 is stopped\n" >&2  # debug
+        #echo "$1 is stopped"  # debug
         return 1
     elif [[ $code == "255" ]] || [[ $code == "4" ]]; then
-        echo -e "$1 is not installed\n" >&2  # debug
+        #echo "$1 is not installed"  # debug
         return 255
     elif [[ $code == "150" ]]; then
-        echo -e "$1 is broken\n" >&2  # debug
+        #echo -e "$1 is broken"  # debug
         return 150
     else
-        #echo "$code" >&2  # debug
+        #echo "$code"  # debug
         return "$code"
     fi
 }
@@ -297,9 +305,10 @@ do_manual_install(){
     echo -e "  7. Click Next and install Container Manager."
     echo -e "  8. Close Package Center."
     echo -e "  9. Return to this window so the script can restore the correct model number."
-    echo -e "  10. Type ${Cyan}yes${Off} after you have manually installed Container Manager."
-    read -r answer
-    if [[ ${answer,,} != "yes" ]]; then
+    echo -e "  10. Type ${Cyan}y${Off} after you have manually installed Container Manager."
+    #read -r answer
+    until read -r -t20 -p $'\0' answer; do :; done
+    if [[ ${answer,,} != "y" ]]; then
         restore_unique
         exit
     fi
@@ -308,131 +317,135 @@ do_manual_install(){
 }
 
 
-# Check if Container Manager already installed
-package_status ContainerManager >/dev/null
-code="$?"
-#if [[ $(package_status ContainerManager) != "255" ]]; then
-if [[ $code != "255" ]]; then
-    # Container Manager is installed
-    target=$(readlink "/var/packages/ContainerManager/target")
-    targetvol="/$(printf %s "${target:?}" | cut -d'/' -f2 )"
-    #targetvol="$(printf %s "${target:?}" | cut -d'/' -f2 )"
+if [[ $recover == "yes" ]]; then
+    echo "Finishing installation"
+else
+    # Check if Container Manager already installed
+    package_status ContainerManager >/dev/null
+    code="$?"
+    #if [[ $(package_status ContainerManager) != "255" ]]; then
+    if [[ $code != "255" ]]; then
+        # Container Manager is installed
+        target=$(readlink "/var/packages/ContainerManager/target")
+        targetvol="/$(printf %s "${target:?}" | cut -d'/' -f2 )"
+        #targetvol="$(printf %s "${target:?}" | cut -d'/' -f2 )"
 
-    # Check if newer version available
-    archive_url="https://archive.synology.com/download/Package/ContainerManager"
-        latest_version="$(curl --silent "$archive_url" |\
-        grep 'href="/download/Package/ContainerManager' |\
-        cut -d">" -f2 | cut -d"<" -f1 | head -n 1)"
-    installed_version="$(synogetkeyvalue /var/packages/ContainerManager/INFO version)"
+        # Check if newer version available
+        archive_url="https://archive.synology.com/download/Package/ContainerManager"
+            latest_version="$(curl --silent "$archive_url" |\
+            grep 'href="/download/Package/ContainerManager' |\
+            cut -d">" -f2 | cut -d"<" -f1 | head -n 1)"
+        installed_version="$(synogetkeyvalue /var/packages/ContainerManager/INFO version)"
 
-    new_build="$(echo "$latest_version" | cut -d"-" -f2)"
-    old_build="$(echo "$installed_version" | cut -d"-" -f2)"
+        new_build="$(echo "$latest_version" | cut -d"-" -f2)"
+        old_build="$(echo "$installed_version" | cut -d"-" -f2)"
 
-    if [[ $new_build -gt "$old_build" ]]; then
-        echo "New Container Manager version available:"
-        echo "  Latest version is: $latest_version"
-        echo "  Installed version: $installed_version"
-        echo -e "Do you want to update to $latest_version [y/n]"
-        read -r reply
-        if [[ ${reply,,} == "y" ]]; then
-            upgrade="yes"
-        else
-            # User did not answer yes
-            exit 1  # User answered no to upgrading Container Manager
-        fi
-        echo ""
-    else
-        echo "Container Manager already installed on $targetvol"
-        echo -e "No new version available\n"
-        exit 1  # Container Manager already installed
-    fi
-fi
-
-# Backup synoinfo.conf if needed
-synoinfo="/etc.defaults/synoinfo.conf"
-if [[ ! -f ${synoinfo}.bak ]]; then
-    if cp "$synoinfo" "$synoinfo.bak"; then
-        echo -e "Backed up synoinfo.conf\n"
-        chmod 755 "$synoinfo.bak"
-    else
-        ding
-        echo -e "\n${Error}ERROR 5${Off} Failed to backup synoinfo.conf!"
-        exit 1  # Backup failed
-    fi
-fi
-
-
-# Select volume if there's more than 1
-if [[ -z $target ]]; then
-    if [[ $upgrade != "yes" ]]; then
-        # Get list of available volumes
-        volumes=( )
-        for v in /volume*; do
-            # Ignore /volumeUSB# and /volume0
-            if [[ $v =~ /volume[1-9][0-9]?$ ]]; then
-                # Ignore unmounted volumes
-                if df -h | grep "$v" >/dev/null ; then
-                    volumes+=("$v")
-                fi
+        if [[ $new_build -gt "$old_build" ]]; then
+            echo "New Container Manager version available:"
+            echo "  Latest version is: $latest_version"
+            echo "  Installed version: $installed_version"
+            echo -e "Do you want to update to $latest_version [y/n]"
+            #read -r reply
+            until read -r -t20 -p $'\0' answer; do :; done
+            if [[ ${reply,,} == "y" ]]; then
+                upgrade="yes"
+            else
+                # User did not answer yes
+                exit 1  # User answered no to upgrading Container Manager
             fi
-        done
+            echo ""
+        else
+            echo "Container Manager already installed on $targetvol"
+            echo -e "No new version available\n"
+            exit 1  # Container Manager already installed
+        fi
+    fi
 
-        # Select volume to install Container Manager on
-        if [[ ${#volumes[@]} -gt 1 ]]; then
-            PS3="Select the volume to install Container Manager on: "
-            select targetvol in "${volumes[@]}"; do
-                if [[ $targetvol ]]; then
-                    if [[ -d $targetvol ]]; then
-                        echo -e "You selected ${Cyan}${targetvol}${Off}\n"
-                        break
-                    else
-                        ding
-                        echo -e "${Error}ERROR${Off} $targetvol not found!"
-                        exit 1  # Target volume not found
+    # Backup synoinfo.conf if needed
+    synoinfo="/etc.defaults/synoinfo.conf"
+    if [[ ! -f ${synoinfo}.bak ]]; then
+        if cp "$synoinfo" "$synoinfo.bak"; then
+            echo -e "Backed up synoinfo.conf\n"
+            chmod 755 "$synoinfo.bak"
+        else
+            ding
+            echo -e "\n${Error}ERROR 5${Off} Failed to backup synoinfo.conf!"
+            exit 1  # Backup failed
+        fi
+    fi
+
+
+    # Select volume if there's more than 1
+    if [[ -z $target ]]; then
+        if [[ $upgrade != "yes" ]]; then
+            # Get list of available volumes
+            volumes=( )
+            for v in /volume*; do
+                # Ignore /volumeUSB# and /volume0
+                if [[ $v =~ /volume[1-9][0-9]?$ ]]; then
+                    # Ignore unmounted volumes
+                    if df -h | grep "$v" >/dev/null ; then
+                        volumes+=("$v")
                     fi
-                else
-                    echo "Invalid choice!"
                 fi
             done
-        elif [[ ${#volumes[@]} -eq 1 ]]; then
-            targetvol="${volumes[0]}"
-        fi
-    else
-        link="$(readlink /var/packages/ContainerManager/target | cut -d"/" -f2)"
-        if [[ $link ]]; then
-            targetvol="/$link"
+
+            # Select volume to install Container Manager on
+            if [[ ${#volumes[@]} -gt 1 ]]; then
+                PS3="Select the volume to install Container Manager on: "
+                select targetvol in "${volumes[@]}"; do
+                    if [[ $targetvol ]]; then
+                        if [[ -d $targetvol ]]; then
+                            echo -e "You selected ${Cyan}${targetvol}${Off}\n"
+                            break
+                        else
+                            ding
+                            echo -e "${Error}ERROR${Off} $targetvol not found!"
+                            exit 1  # Target volume not found
+                        fi
+                    else
+                        echo "Invalid choice!"
+                    fi
+                done
+            elif [[ ${#volumes[@]} -eq 1 ]]; then
+                targetvol="${volumes[0]}"
+            fi
+        else
+            link="$(readlink /var/packages/ContainerManager/target | cut -d"/" -f2)"
+            if [[ $link ]]; then
+                targetvol="/$link"
+            fi
         fi
     fi
+
+    #exit  # debug
+    #targetvol=/volume1  # debug
+
+
+    # Change unique to a supported model
+    echo -e "Editing synoinfo.conf\n"
+    synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
+    synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
+
+
+    # Uninstall Container Manager if upgrading
+    if [[ $upgrade == "yes" ]]; then
+        echo "Upgrading Container Manager"
+        package_uninstall ContainerManager "Container Manager"
+    fi
+
+    # ? Download https://global.synologydownload.com/download/Package/spk/ContainerManager/20.10.23-1437/ContainerManager-armv8-20.10.23-1437.spk
+    # ? Do a Manual Install in Package Center of the .spk file you downloaded.
+    #
+    # Install Container Manager
+    package_install ContainerManager "$targetvol" "Container Manager"
+    if [[ $install_from_server_failed == "yes" ]]; then
+        do_manual_install
+    fi
+
+    # Allow package processes to finish starting
+    #wait_status ContainerManager start
 fi
-
-#exit  # debug
-#targetvol=/volume1  # debug
-
-
-# Change unique to a supported model
-echo -e "Editing synoinfo.conf\n"
-synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
-synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
-
-
-# Uninstall Container Manager if upgrading
-if [[ $upgrade == "yes" ]]; then
-    echo "Upgrading Container Manager"
-    package_uninstall ContainerManager "Container Manager"
-fi
-
-# ? Download https://global.synologydownload.com/download/Package/spk/ContainerManager/20.10.23-1437/ContainerManager-armv8-20.10.23-1437.spk
-# ? Do a Manual Install in Package Center of the .spk file you downloaded.
-#
-# Install Container Manager
-package_install ContainerManager "$targetvol" "Container Manager"
-if [[ $install_from_server_failed == "yes" ]]; then
-    do_manual_install
-fi
-
-# Allow package processes to finish starting
-#wait_status ContainerManager start
-
 
 # Stop Container Manager
 package_stop ContainerManager "Container Manager"
@@ -447,10 +460,7 @@ echo -e "Editing ContainerManager INFO\n"
 sed -i "/exclude_model=*/d" /var/packages/ContainerManager/INFO
 
 # Restore unique to original model
-echo -e "Restoring synoinfo.conf\n"
-synosetkeyvalue /etc/synoinfo.conf unique "$current_unique"
-synosetkeyvalue /etc.defaults/synoinfo.conf unique "$current_unique"
-
+restore_unique
 
 # Start Container Manager
 package_start ContainerManager "Container Manager"
