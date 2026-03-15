@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v2.0.13"
+scriptver="v2.0.14"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -456,6 +456,8 @@ else
     echo -e "Editing synoinfo.conf\n"
     synosetkeyvalue /etc/synoinfo.conf unique synology_rtd1619b_ds423
     synosetkeyvalue /etc.defaults/synoinfo.conf unique synology_rtd1619b_ds423
+    # Wait 5 seconds to give DSM time to notice the changed model
+    sleep 5
 
 
     # Uninstall Container Manager if upgrading
