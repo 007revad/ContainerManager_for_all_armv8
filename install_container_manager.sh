@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v2.0.12"
+scriptver="v2.0.13"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -327,6 +327,28 @@ do_manual_install(){
     echo ""
 }
 
+get_latest_pkg_version() {
+    local package="$1"
+    local version_file="/etc.defaults/VERSION"
+    local synoinfo_file="/etc.defaults/synoinfo.conf"
+    local major minor build timezone unique pkgupdate_url json version
+
+    major="$(synogetkeyvalue "$version_file" "majorversion")"
+    minor="$(synogetkeyvalue "$version_file" "minorversion")"
+    build="$(synogetkeyvalue "$version_file" "buildnumber")"
+    timezone="$(synogetkeyvalue "$synoinfo_file" "timezone")"
+    unique="$(synogetkeyvalue "$synoinfo_file" "unique")"
+    pkgupdate_url="$(synogetkeyvalue "$synoinfo_file" "pkgupdate_server")"
+    pkgupdate_url="${pkgupdate_url:-"https://pkgupdate.synology.com"}/firmware/v1/get"
+
+    unique=synology_rtd1296_ds423  # Check DS423 latest package version
+
+    json="$(curl -s -L "${pkgupdate_url}?language=enu&timezone=${timezone}&unique=${unique}&major=${major}&minor=${minor}&build=${build}&package_update_channel=stable&package=${package}")"
+
+    version="$(echo "$json" | jq -r '.package.version // empty')"
+    echo "$version"
+}
+
 
 if [[ $recover == "yes" ]]; then
     echo "Finishing installation"
@@ -342,23 +364,20 @@ else
         #targetvol="$(printf %s "${target:?}" | cut -d'/' -f2 )"
 
         # Check if newer version available
-        archive_url="https://archive.synology.com/download/Package/ContainerManager"
-            latest_version="$(curl --silent "$archive_url" |\
-            grep 'href="/download/Package/ContainerManager' |\
-            cut -d">" -f2 | cut -d"<" -f1 | head -n 1)"
+        latest_version="$(get_latest_pkg_version ContainerManager)"
         installed_version="$(synogetkeyvalue /var/packages/ContainerManager/INFO version)"
 
         new_build="$(echo "$latest_version" | cut -d"-" -f2)"
         old_build="$(echo "$installed_version" | cut -d"-" -f2)"
 
         if [[ $new_build -gt "$old_build" ]]; then
-            echo "New Container Manager version available:"
-            echo "  Latest version is: $latest_version"
+            echo "New Container Manager version available for DSM ${productversion}:"
             echo "  Installed version: $installed_version"
+            echo "  Latest version is: $latest_version"
             echo -e "Do you want to update to $latest_version [y/n]"
             #read -r reply
             until read -r -t20 -p $'\0' answer; do :; done
-            if [[ ${reply,,} == "y" ]]; then
+            if [[ ${answer,,} == "y" ]]; then
                 upgrade="yes"
             else
                 # User did not answer yes
