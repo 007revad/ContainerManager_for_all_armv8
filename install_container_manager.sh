@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v2.0.11"
+scriptver="v2.0.12"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -295,8 +295,19 @@ package_install(){
 do_manual_install(){ 
     echo -e "\nDo ${Error}NOT${Off} exit the script or close this window.\n"
     echo -e "Please do a manual install:\n"
-    echo -e "  1. Download the latest ContainerManager-${Cyan}armv8${Off} spk file from:"
-    echo "     https://archive.synology.com/download/Package/ContainerManager"
+    if [[ "$buildnumber" -ge "81100" ]]; then
+        # DSM 7.3 or later
+        echo -e "  1. Download the latest ContainerManager-${Cyan}armv8${Off} spk file from:"
+        echo "     https://archive.synology.com/download/Package/ContainerManager"
+    elif [[ "$buildnumber" -ge "69057" ]]; then
+        # DSM 7.2.1 or later but not 7.3
+        echo -e "  1. Download the ContainerManager-${Cyan}armv8${Off}-24.0.2-1543.spk file from:"
+        echo "     https://archive.synology.com/download/Package/ContainerManager/24.0.2-1543"
+    elif [[ "$buildnumber" -ge "64555" ]]; then
+        # DSM 7.2
+        echo -e "  1. Download the ContainerManager-${Cyan}armv8${Off}-24.0.2-1535.spk file from:"
+        echo "     https://archive.synology.com/download/Package/ContainerManager/24.0.2-1535"
+    fi
     echo -e "  2. Open Package Center."
     echo -e "  3. Click on the Manual Install button."
     echo -e "  4. Click on the Browse button."
