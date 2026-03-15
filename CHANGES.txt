@@ -1,3 +1,6 @@
+v2.0.14 - (15 Mar 2026)
+- Bug for DSM 7.3 "Failed to query package list from server" error. Issue #62
+
 v2.0.13 - (15 Mar 2026)
 - Bug fix for not updating Container Manager if there's a newer version available and the user answered "y". Issue #63
 - Bug fix for offering to update to the latest DSM 7.3 version of Container Manager if the installed DSM version was 7.2 or 7.2.1
