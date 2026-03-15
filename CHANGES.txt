@@ -1,3 +1,9 @@
+v2.0.12 - (15 Mar 2026)
+- Changed manual install instructions to point to the correct package version for the user's DSM version.
+  - Container Manager 24.0.2-1606 for DSM 7.3-81100 or later
+  - Container Manager 24.0.2-1543 for DSM 7.2.1-69057 or later but not DSM 7.3.
+  - Container Manager 24.0.2-1535 for DSM 7.2-64555.
+
 v2.0.11 - (8 Feb 2026)
 - Changed to try to prevent SSH connection closing due to inactivity.
 - Changed to automatically finish the remaining steps if the script didn't finish last time.
