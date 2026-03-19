@@ -10,7 +10,7 @@
 # sudo -s /volume1/scripts/install_container_manager.sh
 #---------------------------------------------------------------------------------------
 
-scriptver="v2.0.14"
+scriptver="v2.0.15"
 script=ContainerManager_for_all_armv8
 #repo="007revad/ContainerManager_for_all_armv8"
 #scriptname=install_container_manager
@@ -236,6 +236,7 @@ package_stop(){
     # $1 is package name
     # $2 is package display name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
+    > /tmp/installcm.txt
     timeout 5m /usr/syno/bin/synopkg stop "$1" >/dev/null &
     pid=$!
     string="Stopping ${Cyan}${2}${Off}"
@@ -252,6 +253,7 @@ package_start(){
     # $1 is package name
     # $2 is package display name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
+    > /tmp/installcm.txt
     timeout 5m /usr/syno/bin/synopkg start "$1" >/dev/null &
     pid=$!
     string="Starting ${Cyan}${2}${Off}"
@@ -268,6 +270,7 @@ package_uninstall(){
     # $1 is package name
     # $2 is package display name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
+    > /tmp/installcm.txt
     #/usr/syno/bin/synopkg uninstall "$1" >/dev/null &
     /usr/syno/bin/synopkg uninstall "$1" >/tmp/installcm.txt &
     pid=$!
@@ -283,6 +286,7 @@ package_install(){
     # $2 is /volume2 etc
     # $3 is package display name
     [ "$trace" == "yes" ] && echo "${FUNCNAME[0]} called from ${FUNCNAME[1]}"
+    > /tmp/installcm.txt
     #/usr/syno/bin/synopkg install_from_server "$1" "$2" >/dev/null &
     /usr/syno/bin/synopkg install_from_server "$1" "$2" >/tmp/installcm.txt &
     pid=$!
